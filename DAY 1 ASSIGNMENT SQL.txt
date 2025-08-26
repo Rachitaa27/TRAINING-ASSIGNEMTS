@@ -1,0 +1,587 @@
+create TABLE STUDENT(
+    rollnumber number,
+    student_name varchar2(20),
+    email varchar2(20),
+    stream varchar2(20),
+    birthday date,
+    address varchar2(20)
+);
+
+desc STUDENT;
+
+INSERT INTO STUDENT VALUES(101,'JACK','jack@gmail.com','BE','10-JAN-2002','PUNE');
+INSERT INTO STUDENT VALUES(102,'JANE','jane@gmail.com','ME', '12-FEB-2003','CHENNAI');
+INSERT INTO STUDENT VALUES(103,'JULIE','julie@gmail.com','MCA','14-MAR-2004','BENGALURU')
+
+ALTER TABLE STUDENT ADD GENDER CHAR(1);
+SELECT * FROM STUDENT 
+UPDATE STUDENT SET GENDER='M' WHERE ROLLNUMBER=101;
+UPDATE STUDENT SET GENDER='F' WHERE ROLLNUMBER=102;
+UPDATE STUDENT SET GENDER='F' WHERE ROLLNUMBER=103;
+
+ALTER TABLE STUDENT DROP COLUMN STREAM;
+
+--MODIFY DATA TYPE IN EXISTING COLUMN--
+ALTER TABLE STUDENT MODIFY GENDER VARCHAR2(10);
+
+ALTER TABLE STUDENT MODIFY EMAIL VARCHAR2(15);
+
+ALTER TABLE STUDENT RENAME COLUMN ADDRESS TO LOCATION;
+--COPY OF EXISTING TABLE--
+CREATE TABLE STUDENT6 AS SELECT * FROM STUDENT;
+SELECT * FROM STUDENT6;
+
+--RENAME EXISTING TABLE--
+RENAME STUDENT6 TO STUDENT10;
+
+--TRUNCATE FUNCTION--
+TRUNCATE TABLE STUDENT10;
+
+--TO DISPLAY HOW MANY TABLES ARE THERE WE USE THIS COMMAND-- 
+SELECT * FROM TAB;
+
+--TO SHOW THE METADATA--
+DESC USER_TABLES;
+
+CREATE TABLE EMPLOYEE (
+    EMPNO NUMBER PRIMARY KEY,
+    GENDER CHAR(1) DEFAULT 'F',
+    ENAME VARCHAR2(20) NOT NULL,
+    EMAIL VARCHAR2(20) UNIQUE,
+    SAL NUMBER CHECK (SAL>5000),
+    COMM NUMBER CHECK (COMM>300)
+);
+
+INSERT INTO EMPLOYEE values(101,'F','JANE','jane@gmail.com',6000,800);
+
+desc user_constraints;
+
+SELECT CONSTRAINT_NAME, CONSTRAINT_TYPE,SEARCH_CONDITION,TABLE_NAME
+FROM USER_CONSTRAINTS WHERE TABLE_NAME='EMPLOYEE';
+
+
+CREATE TABLE EMPLOYEE1 (
+    EMPNO NUMBER CONSTRAINT EMPNO_PK PRIMARY KEY,
+    GENDER CHAR(1) DEFAULT 'F',
+    ENAME VARCHAR2(20) CONSTRAINT ENAME_NOTNULL NOT NULL,
+    EMAIL VARCHAR2(20) CONSTRAINT EMAIL_UNIQ UNIQUE,
+    SAL NUMBER CONSTRAINT CHECK_SAL_GT_5K CHECK (SAL>5000),
+    COMM NUMBER CONSTRAINT CHECK_COMM_GT_SAL CHECK (COMM>300)
+);
+ INSERT INTO EMPLOYEE1 VALUES(101,'F','JANE','jane@gmail.com',5400,800);
+ INSERT INTO EMPLOYEE1 VALUES(102,'JULIE','julie@gmail.com',7600,700);
+ insert INTO EMPLOYEE1 VALUES(103,'M','NULL','robert@gmail.com',6000,900);
+ 
+ SELECT * FROM EMPLOYEE1;
+ DESC EMPLOYEE1;
+
+--default--
+ INSERT INTO EMPLOYEE1(EMPNO,ENAME,EMAIL,SAL,COMM) VALUES(104,'ALICE','alice@gmail.com',8000,600);
+
+create table EMPLOYEE2(
+    EMPNO NUMBER,
+    GENDER CHAR(1) DEFAULT 'F',
+    ENAME VARCHAR2 (20) CONSTRAINT ENAME_CANTBLANK NOT NULL,
+    EMAIL VARCHAR(20),
+    SAL NUMBER,
+    COMM NUMBER,
+    CONSTRAINT EMP_PK21 PRIMARY KEY (EMPNO),
+    CONSTRAINT EMAIL_UNIQUE1 UNIQUE(EMAIL),
+    CONSTRAINT CHECK_SALARY1 CHECK (SAL>6000),
+    CONSTRAINT CHECK_COMMISSION CHECK (COMM>700)
+);
+
+INSERT INTO EMPLOYEE2 VALUES (101,'M','SAM','sam@gmail.com',9000,900);
+
+ALTER TABLE EMPLOYEE2 DISABLE PRIMARY KEY
+
+ALTER TABLE EMPLOYEE2 ENABLE PRIMARY KEY
+
+ALTER TABLE EMPLOYEE2 DISABLE CONSTRAINT CHECK_SALARY1;
+
+DROP TABLE STUDENT11;
+create TABLE STUDENT11(
+    rollnumber number PRIMARY KEY,
+    student_name varchar2(20),
+    email varchar2(20),
+    stream varchar2(20),
+    birthday date,
+    address varchar2(20)
+);
+
+INSERT INTO STUDENT11 VALUES(101,'JACK','jack@gmail.com','BE','10-JAN-2002','PUNE');
+INSERT INTO STUDENT11 VALUES(102,'JANE','jane@gmail.com','ME', '12-FEB-2003','CHENNAI');
+INSERT INTO STUDENT11 VALUES(103,'JULIE','julie@gmail.com','MCA','14-MAR-2004','BENGALURU')
+
+
+CREATE TABLE STUDENT_MARKS(
+    ROLLNUMBER NUMBER REFERENCES STUDENT11 (ROLLNUMBER),
+    PHYSICS NUMBER,
+    CHEMISTRY NUMBER,
+    MATHS NUMBER,
+    TOTAL number
+);
+ INSERT INTO STUDENT_MARKS(ROLLNUMBER, PHYSICS,CHEMISTRY, MATHS) VALUES(NULL,93,92,97);
+
+SELECT ROWNUM, EMPNO, ENAME ,JOB,SAL, DEPTNO FROM EMP;
+
+SELECT ROWNUM,EMPNO,ENAME,JOB,SAL,DEPTNO FROM EMP WHERE ROWNUM<=7
+MINUS
+SELECT ROWNUM,EMPNO,ENAME,JOB,SAL,DEPTNO FROM EMP WHERE ROWNUM<=5
+
+SELECT ROWNUM,EMPNO,ENAME,JOB,SAL,DEPTNO FROM EMP WHERE ROWNUM<=7
+UNION ALL
+SELECT ROWNUM,EMPNO,ENAME,JOB,SAL,DEPTNO FROM EMP WHERE ROWNUM<=5
+
+CREATE TABLE TABLE_A(
+    COLUMN_A VARCHAR2(5)
+);
+
+CREATE TABLE TABLE_B(
+    COLUMN_B VARCHAR2(5)
+);
+
+CREATE TABLE TABLE_C(
+    COLUMN_C VARCHAR2(5)
+);
+
+INSERT INTO TABLE_A VALUES(111);
+INSERT INTO TABLE_B VALUES(222);
+INSERT INTO TABLE_C VALUES(333);
+
+SELECT * FROM TABLE_A,TABLE_B,TABLE_C;
+
+CREATE TABLE AUTHOR_1
+(
+    AUTHOR_ID NUMBER PRIMARY KEY,
+    AUTHOR_NAME VARCHAR2(20),
+    CITY VARCHAR(20);
+    BID NUMBER
+);
+--CROSS JOIN--
+SELECT DEPT.DEPTNO AS "DEPT DEPTNO", DNAME,LOC,EMPNO,ENAME,JOB,SAL,COMM,EMP.DEPTNO AS "EMP DEPTNO" FROM DEPT,EMP;
+
+--EQUI JOIN--
+SELECT DEPT.DEPTNO AS "DEPT DEPTNO", DNAME,LOC,EMPNO,ENAME,JOB,SAL,COMM,EMP.DEPTNO AS "EMP DEPTNO" FROM DEPT,EMP WHERE DEPT.DEPTNO=EMP.DEPTNO;
+
+--EQUI JOIN WHERE WE CAN PRINT A LINE USING THE ||  AT THE PLACES NEEDED --
+SELECT 
+ENAME || ' IS WORKING IN '|| DNAME || ' DEPARTMENT AT' || LOC ||  ' EARNING SALARY AS' SAL
+FROM DEPT,EMP WHERE DEPT.DEPTNO=EMP.DEPTNO;
+ 
+--NON EQUI JOIN--
+SELECT * FROM SALGRADE;
+
+SELECT ENAME || '  IS EARNING SALARY OF THE GRADE' || GRADE || ' TYPE'
+FROM EMP,SALGRADE 
+WHERE SAL BETWEEN LOSAL AND HISAL;
+
+--OUTER JOIN--
+CREATE TABLE BOOK_5(
+    BOOK_ID NUMBER PRIMARY KEY,
+    BOOK_NAME VARCHAR2(20),
+    NOP NUMBER(5),
+    BOOK_COST NUMBER,
+    AID NUMBER
+);
+
+
+CREATE TABLE AUTHOR_2
+(
+    AUTHOR_ID NUMBER PRIMARY KEY,
+    AUTHOR_NAME VARCHAR2(20),
+    CITY VARCHAR2(20),
+    BID NUMBER
+);
+
+Insert into AUTHOR_2 values (501, 'YAshwant kanetkar', 'NAGPUR', 101);
+Insert into AUTHOR_2 values (502, 'Stanely Lipman', 'US', 102);
+Insert into AUTHOR_2 values (503, 'JAmes gosling', 'UK', 103);
+Insert into AUTHOR_2 values (504, 'Richard', 'ussr', null);
+
+SELECT * FROM AUTHOR_2;
+
+Insert into BOOK_5 values (101, 'Let us C', 500, 250, 501);
+Insert into BOOK_5 values (103, 'Java', 1200, 750, 503);
+Insert into BOOK_5 values (102, 'C++ primer', 800, 550, 502);
+Insert into BOOK_5 values (104, 'Linux', 2000, 950, null);
+
+SELECT *FROM BOOK_5;
+
+SELECT * FROM BOOKS_5, AUTHOR_5 WHERE BOOK_ID=BID (+)
+ 
+
+--QUERY 1--
+-- Creating Member table
+CREATE TABLE Member1 (
+    Member_Id        NUMBER(5),
+    Member_Name      VARCHAR2(30),
+    Member_Address   VARCHAR2(50),
+    Acc_Open_Date    DATE,
+    Membership_Type  VARCHAR2(20),
+    Fees_Paid        NUMBER(4),
+    Max_Books_Allowed NUMBER(2),
+    Penalty_Amount   NUMBER(7,2)
+);
+
+-- Creating Books table
+CREATE TABLE Books_NEW (
+    Book_Id     NUMBER(5),
+    Book_Name   VARCHAR2(50),
+    Author_Name VARCHAR2(30),
+    Publisher   VARCHAR2(30),
+    Price       NUMBER(7,2)
+);
+
+DROP TABLE ISSUE_NEW;
+
+-- Creating Issue table
+CREATE TABLE Issue_NEW (
+    Issue_Id     NUMBER(5),
+    Member_Id    NUMBER(5),
+    Book_Id      NUMBER(5),
+    Issue_Date   DATE,
+    Return_Date  DATE
+);
+--QUERY 2--
+DESC Member1;
+DESC Books_NEW;
+DESC Issue_NEW;
+
+--QUERY 3--
+DROP TABLE MEMBER1;
+
+--QUERY 4--
+CREATE TABLE Member1 (
+    Member_Id NUMBER(5) PRIMARY KEY,
+    Member_Name VARCHAR2(30),
+    Member_Address VARCHAR2(50),
+    Acc_Open_Date DATE,
+    Membership_Type VARCHAR2(20) 
+        CHECK (Membership_Type IN ('Lifetime', 'Annual', 'Half Yearly', 'Quarterly')),
+    Fees_Paid NUMBER(4),
+    Max_Books_Allowed NUMBER(2),
+    Penalty_Amount NUMBER(7,2)
+);
+ --QUERY 5--
+ ALTER TABLE Member1 MODIFY (Member_Name VARCHAR2(30));
+
+ --QUERY 6--
+ ALTER TABLE ISSUE_NEW ADD REFERENCES CHAR(30);
+
+ --QUERY 7--
+ ALTER TABLE ISSUE_NEW DROP COLUMN REFERENCES;
+
+ --QUERY 8--
+
+ RENAME ISSUE_NEW TO LIB_ISSUE;
+
+ --QUERY 9--
+ALTER TABLE Member1 MODIFY (Fees_Paid NUMBER(7,0));
+
+INSERT INTO Member1 (Member_Id, Member_Name, Member_Address, Acc_Open_Date, Membership_Type, Fees_Paid, Max_Books_Allowed, Penalty_Amount)VALUES 
+(1, 'Richa Sharma', 'Pune', TO_DATE('10-DEC-2005', 'DD-MON-YYYY'), 'Lifetime', 25000, 5, 50);
+
+INSERT INTO Member (Member_Id, Member_Name, Member_Address, Acc_Open_Date, Membership_Type, Fees_Paid, Max_Books_Allowed, Penalty_Amount) VALUES 
+(2, 'Garima Sen', 'Pune', SYSDATE, 'Annual', 1000, 3, NULL);
+
+--QUERY 10--
+INSERT INTO Member1
+(Member_Id, Member_Name, Member_Address, Acc_Open_Date, Membership_Type, Fees_Paid, Max_Books_Allowed, Penalty_Amount)
+VALUES 
+(3, 'Amit Verma', 'Delhi', TO_DATE('15-JAN-2005', 'DD-MON-YYYY'), 'Half Yearly', 500, 4, 20);
+
+INSERT INTO Member1 
+(Member_Id, Member_Name, Member_Address, Acc_Open_Date, Membership_Type, Fees_Paid, Max_Books_Allowed, Penalty_Amount)
+VALUES 
+(4, 'Neha Kapoor', 'Mumbai', TO_DATE('20-JUL-2006', 'DD-MON-YYYY'), 'Quarterly', 300, 2, 0);
+
+INSERT INTO Member1
+(Member_Id, Member_Name, Member_Address, Acc_Open_Date, Membership_Type, Fees_Paid, Max_Books_Allowed, Penalty_Amount)
+VALUES 
+(5, 'Rahul Nair', 'Chennai', TO_DATE('05-MAY-2005', 'DD-MON-YYYY'), 'Annual', 1200, 3, 15);
+
+INSERT INTO Member1 
+(Member_Id, Member_Name, Member_Address, Acc_Open_Date, Membership_Type, Fees_Paid, Max_Books_Allowed, Penalty_Amount)
+VALUES 
+(6, 'Sneha Iyer', 'Bangalore', TO_DATE('12-SEP-2007', 'DD-MON-YYYY'), 'Lifetime', 18000, 6, 0);
+
+INSERT INTO Member1 
+(Member_Id, Member_Name, Member_Address, Acc_Open_Date, Membership_Type, Fees_Paid, Max_Books_Allowed, Penalty_Amount)
+VALUES 
+(7, 'Vikram Singh', 'Hyderabad', TO_DATE('28-FEB-2007', 'DD-MON-YYYY'), 'Annual', 1500, 3, 10);
+
+--QUERY 11--
+--BUT WHEN THE NAME IS EXCEEDING THE MAX LENGTH THEN IT CANNOT BE DECREASED--
+ALTER TABLE MEMBER1
+MODIFY (Member_Name VARCHAR2(20));
+
+--QUERY 12--
+INSERT INTO Member1 (Member_Id, Member_Name, Member_Address, Acc_Open_Date, Membership_Type, Fees_Paid, Max_Books_Allowed, Penalty_Amount)VALUES
+(8, 'Test User', 'Pune', SYSDATE, 'Annual', 2000, 110, 0);
+     --ERROR--
+ORA-01438: value 110 greater than specified precision (2, 0) for column 
+
+--QUERY 13-
+CREATE TABLE Member101 AS SELECT * FROM Member1;
+
+--QUERY 14--
+-- Add constraint for Max_Books_Allowed < 100
+ALTER TABLE Member1 ADD CONSTRAINT chk_max_books_allowed CHECK (Max_Books_Allowed < 100);
+
+-- Add constraint for Penalty_Amount <= 1000
+ALTER TABLE Member1 ADD CONSTRAINT chk_penalty_amt CHECK (Penalty_Amount <= 1000);
+
+--QUERY 15--
+DROP TABLE Books_NEW;
+
+--QUERY 16--
+-- Create Books table with constraints
+CREATE TABLE Books_NEW(
+    Book_No     NUMBER(5) PRIMARY KEY,
+    Book_Name   VARCHAR2(50) NOT NULL,
+    Author_Name VARCHAR2(30),
+    Publisher   VARCHAR2(30),
+    Price       NUMBER(7,2),
+    Category    VARCHAR2(20)
+        CHECK (Category IN ('Science', 'Fiction', 'Database', 'RDBMS', 'Others'))
+);
+
+--QUERY 17--
+INSERT INTO Book_NEW (Book_No, Book_Name, Author_Name, Price, Category)
+VALUES (101, 'Let us C', 'Denis Ritchie', 450, 'Others');
+
+INSERT INTO Book_NEW (Book_No, Book_Name, Author_Name, Price, Category)
+VALUES (102, 'Oracle – Complete Ref', 'Loni', 550, 'Database');
+
+INSERT INTO Books (Book_No, Book_Name, Author_Name, Price, Category)
+VALUES (103, 'Mastering SQL', 'Loni', 250, 'Database');
+
+INSERT INTO Books (Book_No, Book_Name, Author_Name, Price, Category)
+VALUES (104, 'PL SQL-Ref', 'Scott Urman', 750, 'Database');
+
+--QUERY 18--
+INSERT INTO BOOKS_NEW(Book_No, Book_Name, Author_Name, Price, Category)
+VALUES (&Book_No, '&Book_Name', '&Author_Name', &Price, '&Category');
+
+--QUERY 19--
+CREATE TABLE Book101
+AS
+SELECT * FROM BOOKS_NEW
+WHERE 1=0;
+
+SELECT * FROM BOOK101;
+--QUERY 20--
+INSERT INTO Book101
+SELECT * FROM BOOKS_NEW;
+
+SELECT * FROM BOOK101;
+
+--QUERY 21--
+COMMIT;
+
+--QUERY 22--
+-- View all rows from Book table
+SELECT * FROM BOOKS_NEW;
+
+-- View all rows from Book101 table
+SELECT * FROM Book101;
+
+-- View all rows from Member table
+SELECT * FROM Member1;
+
+-- View all rows from Member101 table
+SELECT * FROM Member101;
+
+--QUERY 23--
+INSERT INTO BOOKS_NEW(Book_No, Book_Name, Author_Name, Price, Category)  
+VALUES (105, 'National Geographic', 'Adis Scott', 1000, 'Science');
+
+--QUERY 24--
+ROLLBACK;
+
+--QUERY 25--
+UPDATE BOOKS_NEW SET PRICE = 300, Category = 'RDBMS' WHERE Book_No = 103;
+
+--QUERY 26--
+RENAME Lib_Issue TO ISSUE_NEW;
+
+--QUERY 27--
+DROP TABLE ISSUE_NEW;
+
+--QUERY 28--
+DESC BOOKS_NEW;
+DESC Member1;
+
+CREATE TABLE ISSUE_NEW
+(
+    LIB_ISSUE_ID NUMBER(5) PRIMARY KEY,
+    BOOK_NO NUMBER(5),
+    MEMBER_ID NUMBER(5),
+    ISSUE_DATE DATE,
+    RETURN_DATE DATE,
+    CONSTRAINT fk_book FOREIGN KEY (BOOK_NO) 
+        REFERENCES BOOKS_NEW(BOOK_NO),
+    CONSTRAINT fk_member FOREIGN KEY (MEMBER_ID) 
+        REFERENCES Member1(MEMBER_ID),
+    CONSTRAINT chk_dates CHECK (ISSUE_DATE < RETURN_DATE)
+);
+
+--QUERY 29--
+INSERT INTO ISSUE_NEW (Lib_Issue_Id, Book_No, Member_ID, Issue_Date, Return_Date)
+VALUES (7001, 101, 1, TO_DATE('10-Dec-06', 'DD-Mon-YY'), NULL);
+
+INSERT INTO ISSUE_NEW (Lib_Issue_Id, Book_No, Member_ID, Issue_Date, Return_Date)
+VALUES (7002, 102, 2, TO_DATE('25-Dec-06', 'DD-Mon-YY'), NULL);
+
+INSERT INTO ISSUE_NEW (Lib_Issue_Id, Book_No, Member_ID, Issue_Date, Return_Date)
+VALUES (7003, 104, 1, TO_DATE('15-Jan-06', 'DD-Mon-YY'), NULL);
+
+INSERT INTO ISSUE_NEW (Lib_Issue_Id, Book_No, Member_ID, Issue_Date, Return_Date)
+VALUES (7004, 101, 1, TO_DATE('04-Jul-06', 'DD-Mon-YY'), NULL);
+
+INSERT INTO Issue_NEW (Lib_Issue_Id, Book_No, Member_ID, Issue_Date, Return_Date)
+VALUES (7005, 104, 2, TO_DATE('15-Nov-06', 'DD-Mon-YY'), NULL);
+
+INSERT INTO Issue_NEW (Lib_Issue_Id, Book_No, Member_ID, Issue_Date, Return_Date)
+VALUES (7006, 101, 3, TO_DATE('18-Feb-06', 'DD-Mon-YY'), NULL);
+
+--QUERY 30--
+COMMIT;
+
+--QUERY 31--
+ALTER TABLE ISSUE_NEW DISABLE CONSTRAINT fk_book;
+
+ALTER TABLE ISSUE_NEW DISABLE CONSTRAINT fk_member;
+
+ALTER TABLE ISSUE_NEW DISABLE CONSTRAINT chk_dates;
+
+--QUERY 32--
+--here generally member_id will be present in member table but the value which is not there in member table we are taking 
+--since we have disabled the foreign key constraint it will add fake detail if foreign key is there--
+-- oracle will block the insert statement--
+INSERT INTO ISSUE_NEW (LIB_ISSUE_ID, BOOK_NO, MEMBER_ID, ISSUE_DATE, RETURN_DATE)
+VALUES (101, 2001, 999, DATE '2025-08-26', DATE '2025-09-05');
+
+--QUERY 33--
+--When enabling fk_member we see an error as the row we inserted has a MEMBER_ID that doesn’t 
+--exist in the Member1 table, violating referential integrity--
+ALTER TABLE ISSUE_NEW ENABLE CONSTRAINT fk_book;
+ALTER TABLE ISSUE_NEW ENABLE CONSTRAINT fk_member;
+ALTER TABLE ISSUE_NEW ENABLE CONSTRAINT chk_dates;
+
+ORA-02298: cannot validate (SQL_NZTH4HO14CWMP5HMVHKIJZPZSY.FK_BOOK) - parent keys not found
+
+https://docs.oracle.com/error-help/db/ora-02298/
+Error at Line: 4 Column: 0
+
+--QUERY 34--
+DELETE FROM ISSUE_NEW WHERE LIB_ISSUE_ID = 101;
+
+ALTER TABLE ISSUE_NEW ENABLE CONSTRAINT fk_book;
+ALTER TABLE ISSUE_NEW ENABLE CONSTRAINT fk_member;
+ALTER TABLE ISSUE_NEW ENABLE CONSTRAINT chk_dates;
+
+--QUERY 35--
+--HERE MEMBER_ID IS PRESENT IN MEMBER AND ISSUE TABLE SO IF WE REMOVE THE CHILD TABLE IS ALSO LINKED SO ORACLE
+--BLOCKS AND GIVES ERROR--
+DELETE FROM Member1 WHERE Member_ID = 1;
+
+ORA-02292: integrity constraint (SQL_NZTH4HO14CWMP5HMVHKIJZPZSY.FK_MEMBER) violated - child record found
+https://docs.oracle.com/error-help/db/ora-02292/
+
+--QUERY 36--
+UPDATE ISSUE_NEW SET Return_Date = Issue_Date + 15 WHERE LIB_ISSUE_ID IN (7004, 7005);
+
+SELECT LIB_ISSUE_ID, ISSUE_DATE, RETURN_DATE FROM ISSUE_NEW WHERE LIB_ISSUE_ID IN (7004, 7005);
+
+--QUERY 37--
+UPDATE MEMBER SET PENALTY_AMOUNT = 100 WHERE MEMBER_NAME = 'Garima Sen';
+
+--QUERY 38--
+SAVEPOINT X;
+
+--QUERY 39;
+DELETE FROM ISSUE_NEW WHERE MEMBER_ID = 1 AND ISSUE_DATE < DATE '2006-12-10';
+
+--QUERY 40--
+--here to delete from books table 1st remove in issue table where it is reffered so we will get an--
+--integrity constraint error--
+DELETE FROM ISSUE_NEW WHERE BOOK_NO IN (
+    SELECT BOOK_NO FROM BOOKS_NEW 
+    WHERE CATEGORY NOT IN ('RDBMS', 'Database')
+);
+
+DELETE FROM BOOKS_NEW WHERE CATEGORY NOT IN ('RDBMS', 'Database');
+
+--QUERY 41--
+ROLLBACK;
+SAVEPOINT X
+ROLLBACK TO SAVEPOINT X;
+
+--QUERY 42--
+COMMIT;
+
+--QUERY 43--
+DROP TABLE Member101;
+
+--QUERY 44--
+DROP TABLE Book101;
+
+--QUERY 45--
+-- Structure of Member
+DESC MEMBER1;
+
+-- Structure of Issue
+DESC ISSUE_NEW;
+
+-- Structure of Book
+DESC BOOKS_NEW;
+
+-- All data from Member
+SELECT * FROM MEMBER1;
+
+-- All data from Issue
+SELECT * FROM ISSUE_NEW;
+
+-- All data from Book
+SELECT * FROM BOOKS_NEW;
+
+--QUERY 46--
+CREATE SEQUENCE no_seq
+START WITH 100       
+INCREMENT BY 2     
+MINVALUE 100         
+MAXVALUE 200         
+NOCYCLE;             
+
+--QUERY 47--
+DROP SEQUENCE no_seq;
+
+--QUERY 48--
+CREATE SEQUENCE book_seq
+START WITH 101
+INCREMENT BY 1
+MINVALUE 101
+MAXVALUE 1000
+NOCYCLE;
+
+
+SELECT book_seq.NEXTVAL FROM dual;
+
+--QUERY 49--
+CREATE SEQUENCE member_seq
+START WITH 1
+INCREMENT BY 1
+MINVALUE 1
+MAXVALUE 100
+NOCYCLE;
+
+--QUERY 50--
+DROP SEQUENCE no_seq;
+DROP SEQUENCE book_seq;
+DROP SEQUENCE member_seq;
+
+
+
+

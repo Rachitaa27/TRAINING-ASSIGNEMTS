@@ -1,0 +1,106 @@
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Bike Service");
+
+        BikeServiceStation station = new BikeServiceStation();
+
+        Bike bikes[] = {
+                new Bike("Hero Splendor"),
+                new Bike("Honda Activa"),
+                new Bike("Bajaj Pulsar"),
+                new Bike("Royal Enfield Classic")
+        };
+
+        Oil oil = new Oil("Synthetic", 3);
+        Electricity electricity = new Electricity("Reliance", 5);
+        Tools tools = new Tools("Wrench Set");
+
+        ServiceReport report = station.serviceBikes(30, bikes, oil, electricity, tools);
+        report.showReport();
+
+        System.out.println("Bike Serviced");
+    }
+}
+
+class Machine { }
+
+class BikeServiceStation extends Machine {
+    BikeElevatingPlatform platform = new BikeElevatingPlatform();
+
+    ServiceReport serviceBikes(int minutes, Bike[] bikes, Oil oil, Electricity electricity, Tools tools) {
+        System.out.println("Servicing bikes " + Arrays.toString(bikes) + " for " + minutes + " minutes");
+        System.out.println("Using " + oil.quantity + " liters of " + oil.type + " oil");
+        System.out.println("Energy cost: " + electricity.costPerUnit + " Rs unit from " + electricity.provider);
+        System.out.println("Using tools: " + tools.name);
+
+        washBikes(minutes - 10);
+        float bill = (bikes.length * electricity.costPerUnit) + (oil.quantity * 15);
+        return new ServiceReport(bill);
+    }
+
+    void washBikes(int minutes) {
+        System.out.println("Washing bikes for " + minutes + " minutes");
+        polishBikes(minutes - 5);
+    }
+
+    void polishBikes(int minutes) {
+        System.out.println("Polishing the bikes for " + minutes + " minutes");
+    }
+}
+
+class Component { }
+class BikeElevatingPlatform extends Component { }
+
+class Bike {
+    String model;
+
+    Bike(String m) {
+        this.model = m;
+    }
+
+    public String toString() {
+        return this.model;
+    }
+}
+
+class Oil {
+    String type;
+    int quantity;
+
+    Oil(String t, int q) {
+        this.type = t;
+        this.quantity = q;
+    }
+}
+
+class Electricity {
+    String provider;
+    int costPerUnit;
+
+    Electricity(String p, int c) {
+        this.provider = p;
+        this.costPerUnit = c;
+    }
+}
+
+class Tools {
+    String name;
+
+    Tools(String n) {
+        this.name = n;
+    }
+}
+
+class ServiceReport {
+    float billAmount;
+
+    ServiceReport(float b) {
+        this.billAmount = b;
+    }
+
+    void showReport() {
+        System.out.println("Bike service bill: " + billAmount + " Rs");
+    }
+}
